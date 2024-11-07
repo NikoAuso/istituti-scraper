@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b9ea3fa6-d379-41e8-b4a8-6a5aef7e0546" name="Changes" comment="Update font extractor">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fonts_array.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Extractor.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Extractor.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Agbalumo-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/AkayaKanadaka-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Anton-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ArchivoBlack-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Asutenan!.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Ballydance.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Billabong.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Breakable.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Breakable.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Carizo Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-BoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-Light.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-LightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-Medium.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-MediumItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-SemiBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ChakraPetch-SemiBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Chalky Chalkboard.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Cheerful Donuts.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Cheerful Donuts.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/DMSerifDisplay-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/DMSerifDisplay-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Greenfield.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Greenfield.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Hangout.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Hayabuka.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Healing Sunday.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Healing Sunday.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Hello Easteria.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Hellocute.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Hopsters.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Hopsters.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/InterTight-Italic-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/InterTight-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-Black.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-BlackItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-BoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-Light.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-LightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-Thin.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Lato-ThinItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Leafine.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Little Boy.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Little Boy.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Love December.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Nice Postman.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Nice Postman.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/OpenSans-Italic-VariableFont_wdth,wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/OpenSans-VariableFont_wdth,wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Orbitron-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Oswald-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/People Dream.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-Black.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-BlackItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-BoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-Book.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-BookItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-ExtraBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-ExtraBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-ExtraLight.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-ExtraLightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-Light.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-LightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-RegularItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-SemiBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-SemiBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-Thin.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PetrovSans-ThinItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PlayfairDisplay-Italic-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/PlayfairDisplay-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Pretty.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Pretty.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Qetalon.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Quicksand-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/ROMAN BRICK.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/RobotoCondensed-Italic-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/RobotoCondensed-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Santos.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Santos.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Satisfy-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Saunde.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Scolth Free.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Spring.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Spring.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Stay Wild.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Stay Wild.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Super Magnum.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Takipedey.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/The Cottage.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/The Cottage.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/The Smile.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/TitanOne-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Unbounded-VariableFont_wght.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Valencia.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Valencia.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Valverde-CondSemBdIta.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/Valverde-CondensedSemibold.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/WhiskeyState_PERSONAL_USE_ONLY.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/York Village Demo.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fonts decompressi/fFramish.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/extract_fonts.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_fonts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extract_private_istitute.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_private_istitute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extract_public_istitute.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_public_istitute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/istituti_privati.txt" beforeDir="false" afterPath="$PROJECT_DIR$/istituti_privati.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/istituti_pubblici.txt" beforeDir="false" afterPath="$PROJECT_DIR$/istituti_pubblici.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/fonts.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;NikoAuso&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/NikoAuso/Tool_Mamateam.git&quot;,
+    &quot;accountId&quot;: &quot;0735a0be-e829-41eb-aa74-7f872d9fc4bb&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2mKQEmTv9M3B6VekqYz4aADyLM9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.extract_fonts.executor&quot;: &quot;Run&quot;,
+    &quot;Python.extract_private_istitute.executor&quot;: &quot;Run&quot;,
+    &quot;Python.extract_public_istitute.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/nikoauso/Scrivania/Extractor&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.appearance&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.23726.102" />
+        <option value="bundled-python-sdk-5e1850174b45-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.23726.102" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b9ea3fa6-d379-41e8-b4a8-6a5aef7e0546" name="Changes" comment="" />
+      <created>1726822678837</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1726822678837</updated>
+      <workItem from="1726822679905" duration="6955000" />
+      <workItem from="1726835730910" duration="1175000" />
+      <workItem from="1726836909631" duration="8070000" />
+      <workItem from="1726845187086" duration="191000" />
+      <workItem from="1726848042635" duration="311000" />
+      <workItem from="1726851126836" duration="1940000" />
+      <workItem from="1726950991056" duration="3708000" />
+      <workItem from="1730758310425" duration="1441000" />
+      <workItem from="1731008245515" duration="324000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Extractor$extract_public_istitute.coverage" NAME="extract_public_istitute Coverage Results" MODIFIED="1726961918670" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Extractor$extract_fonts.coverage" NAME="extract_fonts Coverage Results" MODIFIED="1730760830687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Extractor$extract_private_istitute.coverage" NAME="extract_private_istitute Coverage Results" MODIFIED="1726962256457" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>
