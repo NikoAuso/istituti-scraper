@@ -11,6 +11,7 @@ Solo libreria standard. Fa da ponte tra index.html ed extract.py:
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import urlparse
 
 import extract
 
@@ -18,6 +19,7 @@ HERE = Path(__file__).parent
 OUTPUT = HERE / "istituti.json"
 CACHE = HERE / "geocache.json"
 PORT = 8000
+ALLOWED_HOSTS = {"127.0.0.1", "localhost"}  # difesa DNS rebinding / CSRF cross-origin
 
 
 def _write(records: list) -> None:
@@ -33,7 +35,17 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _origin_ok(self) -> bool:
+        # blocca Host non locali (DNS rebinding) e POST cross-origin (CSRF)
+        if self.headers.get("Host", "").split(":")[0] not in ALLOWED_HOSTS:
+            return False
+        origin = self.headers.get("Origin")
+        return not origin or urlparse(origin).hostname in ALLOWED_HOSTS
+
     def do_GET(self):
+        if not self._origin_ok():
+            self._send(403, {"error": "forbidden"})
+            return
         if self.path in ("/", "/index.html"):
             self._send(200, (HERE / "index.html").read_bytes(), "text/html; charset=utf-8")
         elif self.path.startswith("/istituti.json"):
@@ -42,6 +54,9 @@ class Handler(BaseHTTPRequestHandler):
             self._send(404, {"error": "not found"})
 
     def do_POST(self):
+        if not self._origin_ok():
+            self._send(403, {"error": "forbidden"})
+            return
         length = int(self.headers.get("Content-Length", 0))
         payload = json.loads(self.rfile.read(length) or b"null")
         try:

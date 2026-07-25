@@ -73,6 +73,7 @@ const REGIONI = ["ABRUZZO","BASILICATA","CALABRIA","CAMPANIA","EMILIA ROMAGNA","
   "UMBRIA","VENETO"];
 const MAX_ROWS = 1000;                     // limite di righe renderizzate a schermo
 const $ = (id) => document.getElementById(id);
+const attr = (v) => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 let data = [];
 
 REGIONI.forEach(r => $("regione").add(new Option(r, r)));
@@ -92,7 +93,7 @@ function render() {
     shown++;
     rows.push("<tr>" + cols.map(c => {
       const v = data[i][c];
-      return `<td><input data-i="${i}" data-c="${c}" value="${v == null ? "" : String(v).replace(/"/g, "&quot;")}"></td>`;
+      return `<td><input data-i="${i}" data-c="${attr(c)}" value="${v == null ? "" : attr(v)}"></td>`;
     }).join("") + "</tr>");
   }
   $("tbody").innerHTML = rows.join("");
