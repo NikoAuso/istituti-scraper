@@ -1,0 +1,153 @@
+<title>Istituti scolastici italiani — estrazione e modifica</title>
+<style>
+  :root { --bd: #d0d5dd; --bg: #f7f8fa; --accent: #2563eb; }
+  * { box-sizing: border-box; }
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 0; color: #101828; }
+  header { padding: 14px 18px; border-bottom: 1px solid var(--bd); }
+  header h1 { font-size: 17px; margin: 0; }
+  header p { margin: 4px 0 0; color: #667085; font-size: 12px; }
+  .panel { display: flex; flex-wrap: wrap; gap: 12px; align-items: end;
+           padding: 12px 18px; background: var(--bg); border-bottom: 1px solid var(--bd); }
+  .panel label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: #475467; }
+  .panel input[type=text], .panel select { padding: 6px 8px; border: 1px solid var(--bd); border-radius: 6px; }
+  .checks { flex-direction: row; align-items: center; gap: 14px; }
+  .checks span { display: inline-flex; align-items: center; gap: 4px; }
+  button { padding: 7px 14px; border: 0; border-radius: 6px; background: var(--accent);
+           color: #fff; font-weight: 600; cursor: pointer; }
+  button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+  button:disabled { opacity: .5; cursor: default; }
+  .toolbar { display: flex; gap: 12px; align-items: center; padding: 10px 18px; }
+  .toolbar input { flex: 1; padding: 7px 10px; border: 1px solid var(--bd); border-radius: 6px; }
+  #status { padding: 0 18px 8px; color: #667085; font-size: 12px; min-height: 16px; }
+  .wrap { overflow: auto; max-height: calc(100vh - 220px); border-top: 1px solid var(--bd); }
+  table { border-collapse: collapse; width: 100%; }
+  th { position: sticky; top: 0; background: #eef1f5; text-align: left; padding: 6px 8px;
+       font-size: 11px; text-transform: uppercase; color: #475467; white-space: nowrap; }
+  td { border-bottom: 1px solid #eef0f3; padding: 0; }
+  td input { width: 100%; min-width: 120px; border: 0; padding: 6px 8px; background: transparent; font: inherit; }
+  td input:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
+</style>
+
+<header>
+  <h1>Istituti scolastici italiani</h1>
+  <p>Dati ufficiali del Ministero (dati.istruzione.it). Imposta le opzioni, genera, modifica in tabella, salva.</p>
+</header>
+
+<div class="panel">
+  <label class="checks">Sorgenti
+    <span><input type="checkbox" id="statali" checked> statali</span>
+    <span><input type="checkbox" id="paritarie" checked> paritarie</span>
+  </label>
+  <label>Regione
+    <select id="regione"><option value="">Tutte</option></select>
+  </label>
+  <label>Provincia
+    <input type="text" id="provincia" placeholder="es. ANCONA" size="12">
+  </label>
+  <label>Livello
+    <select id="livello">
+      <option value="">Tutti</option>
+      <option value="infanzia">Infanzia</option>
+      <option value="primaria">Primaria</option>
+      <option value="secondaria-i">Secondaria I grado</option>
+      <option value="secondaria-ii">Secondaria II grado (superiori)</option>
+      <option value="comprensivo">Istituto comprensivo</option>
+      <option value="altro">Altro (CPIA, convitti…)</option>
+    </select>
+  </label>
+  <label class="checks"><span><input type="checkbox" id="geocode"> geocoding (lat/lon, lento)</span></label>
+  <button id="genera">Genera</button>
+</div>
+
+<div class="toolbar">
+  <input type="text" id="search" placeholder="Filtra la tabella…">
+  <button class="ghost" id="salva" disabled>Salva nel JSON</button>
+</div>
+<div id="status"></div>
+<div class="wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+
+<script>
+// Valle d'Aosta e Trentino-Alto Adige/Bolzano gestiscono anagrafi proprie: non sono nel dataset nazionale.
+const REGIONI = ["ABRUZZO","BASILICATA","CALABRIA","CAMPANIA","EMILIA ROMAGNA","FRIULI VENEZIA GIULIA",
+  "LAZIO","LIGURIA","LOMBARDIA","MARCHE","MOLISE","PIEMONTE","PUGLIA","SARDEGNA","SICILIA","TOSCANA",
+  "UMBRIA","VENETO"];
+const MAX_ROWS = 1000;                     // limite di righe renderizzate a schermo
+const $ = (id) => document.getElementById(id);
+let data = [];
+
+REGIONI.forEach(r => $("regione").add(new Option(r, r)));
+
+function setStatus(msg) { $("status").textContent = msg; }
+
+function columns() { return data.length ? Object.keys(data[0]) : []; }
+
+function render() {
+  const q = $("search").value.trim().toLowerCase();
+  const cols = columns();
+  $("thead").innerHTML = "<tr>" + cols.map(c => `<th>${c}</th>`).join("") + "</tr>";
+  const rows = [];
+  let shown = 0;
+  for (let i = 0; i < data.length && shown < MAX_ROWS; i++) {
+    if (q && !JSON.stringify(data[i]).toLowerCase().includes(q)) continue;
+    shown++;
+    rows.push("<tr>" + cols.map(c => {
+      const v = data[i][c];
+      return `<td><input data-i="${i}" data-c="${c}" value="${v == null ? "" : String(v).replace(/"/g, "&quot;")}"></td>`;
+    }).join("") + "</tr>");
+  }
+  $("tbody").innerHTML = rows.join("");
+  const total = data.length;
+  const suffix = shown < total ? ` (mostrati ${shown}, filtra per vederne altri)` : "";
+  setStatus(`${total} istituti${suffix}`);
+  $("salva").disabled = total === 0;
+}
+
+$("tbody").addEventListener("input", (e) => {
+  const t = e.target;
+  if (!t.dataset.i) return;
+  data[t.dataset.i][t.dataset.c] = t.value === "" ? null : t.value;
+});
+
+$("search").addEventListener("input", render);
+
+$("genera").addEventListener("click", async () => {
+  const opts = {
+    statali: $("statali").checked, paritarie: $("paritarie").checked,
+    regione: $("regione").value, provincia: $("provincia").value.trim(),
+    livello: $("livello").value, geocode: $("geocode").checked,
+  };
+  $("genera").disabled = true;
+  setStatus(opts.geocode ? "Estrazione + geocoding in corso… può richiedere parecchi minuti."
+                         : "Estrazione in corso…");
+  try {
+    const res = await fetch("/extract", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(opts),
+    });
+    const j = await res.json();
+    if (!res.ok) throw new Error(j.error || "errore");
+    data = j.records;
+    render();
+  } catch (err) {
+    setStatus("Errore: " + err.message);
+  } finally {
+    $("genera").disabled = false;
+  }
+});
+
+$("salva").addEventListener("click", async () => {
+  $("salva").disabled = true;
+  setStatus("Salvataggio…");
+  try {
+    const res = await fetch("/save", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data),
+    });
+    const j = await res.json();
+    setStatus(res.ok ? `Salvati ${j.count} istituti in istituti.json` : "Errore: " + j.error);
+  } finally {
+    $("salva").disabled = false;
+  }
+});
+
+// carica un eventuale JSON già generato
+fetch("/istituti.json").then(r => r.json()).then(d => { data = d; if (d.length) render(); });
+</script>
