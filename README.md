@@ -5,7 +5,7 @@ Estrae l'anagrafe delle **scuole italiane** dai dati aperti ufficiali del Minist
 produce un JSON pulito. Scarica i CSV ufficiali direttamente dal sito del Ministero:
 nessuno scraping di pagine HTML, copertura nazionale, fonte autorevole e stabile.
 
-Solo Python 3 standard library, **nessuna dipendenza** da installare.
+Solo Python 3.8+ standard library, **nessuna dipendenza** da installare.
 
 ## Uso da riga di comando
 
@@ -53,6 +53,25 @@ Ogni scuola è un oggetto con questi campi (valori mancanti = `null`):
 | `anno_scolastico` | |
 | `paritaria` | `true` / `false` |
 | `lat`, `lon` | solo con `--geocode` |
+
+Esempio di un elemento (alcuni campi omessi per brevità):
+
+```json
+{
+  "codice": "APTD00201T",
+  "denominazione": "ISTITUTO TECNICO ECONOMICO \"L. EINAUDI\"",
+  "indirizzo": "VIA LEGNANO 17",
+  "cap": "63018",
+  "comune": "PORTO SANT'ELPIDIO",
+  "provincia": "FERMO",
+  "regione": "MARCHE",
+  "grado": "ISTITUTO TECNICO COMMERCIALE",
+  "livello": "secondaria-ii",
+  "email": "APIS00200G@istruzione.it",
+  "sito_web": "www.polourbani.edu.it",
+  "paritaria": false
+}
+```
 
 ## Geocoding
 
