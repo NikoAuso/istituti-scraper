@@ -8,3 +8,6 @@ venv/
 # output e cache generati a runtime
 istituti.json
 geocache.json
+
+# worktree locali per-task
+worktrees/
