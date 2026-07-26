@@ -92,6 +92,8 @@ def normalize(row: dict, paritaria: bool) -> dict:
     record = {field: clean(row.get(col)) for col, field in FIELD_MAP.items()}
     record["livello"] = livello(record["grado"])
     record["paritaria"] = paritaria
+    record["lat"] = None  # sempre presenti; valorizzati da geocode()
+    record["lon"] = None
     return record
 
 

@@ -35,6 +35,7 @@ def test_normalize_statale():
     assert r["pec"] is None            # "Non Disponibile" -> null
     assert r["sito_web"] is None       # solo spazi -> null
     assert r["paritaria"] is False
+    assert r["lat"] is None and r["lon"] is None  # sempre presenti, null senza geocode
 
 
 def test_normalize_paritaria_schema_ridotto():

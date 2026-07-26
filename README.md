@@ -60,7 +60,7 @@ Ogni scuola è un oggetto con questi campi (valori mancanti = `null`):
 | `email`, `pec`, `sito_web` | |
 | `anno_scolastico` | |
 | `paritaria` | `true` / `false` |
-| `lat`, `lon` | solo con `--geocode` |
+| `lat`, `lon` | sempre presenti; valorizzati con `--geocode`, altrimenti `null` (editabili a mano nell'interfaccia) |
 
 Esempio di un elemento (alcuni campi omessi per brevità):
 

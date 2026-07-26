@@ -173,7 +173,7 @@ const COLUMNS = [
   { k: "sito_web", label: "Sito web" },
   { k: "paritaria", label: "Paritaria", bool: true, ro: true },
   { k: "codice", label: "Codice", ro: true },
-  { k: "lat", label: "Lat" }, { k: "lon", label: "Lon" },
+  { k: "lat", label: "Lat", num: true }, { k: "lon", label: "Lon", num: true },
   { k: "pec", label: "PEC", extra: true },
   { k: "codice_comune", label: "Cod. comune", extra: true, ro: true },
   { k: "area", label: "Area", extra: true, ro: true },
@@ -291,6 +291,7 @@ function render() {
 
 function load(records) {
   data = records;
+  data.forEach(r => { if (!("lat" in r)) r.lat = null; if (!("lon" in r)) r.lon = null; });
   sortKey = null;
   refreshFilters();
   buildColsMenu();
@@ -310,13 +311,11 @@ function onEdit(e) {
   const t = e.target;
   if (t.dataset.i == null) return;
   const rec = data[t.dataset.i], k = t.dataset.c;
+  const col = COLUMNS.find((c) => c.k === k);
   if (t.type === "checkbox") rec[k] = t.checked;
-  else if (t.tagName === "SELECT") {
-    const col = COLUMNS.find((c) => c.k === k);
-    rec[k] = col && col.parse ? col.parse(t.value) : (t.value === "" ? null : t.value);
-  } else {
-    rec[k] = t.value === "" ? null : t.value;
-  }
+  else if (t.tagName === "SELECT") rec[k] = col && col.parse ? col.parse(t.value) : (t.value === "" ? null : t.value);
+  else if (col && col.num) { const n = parseFloat(t.value); rec[k] = isNaN(n) ? null : n; }
+  else rec[k] = t.value === "" ? null : t.value;
 }
 $("tbody").addEventListener("input", onEdit);   // input di testo
 $("tbody").addEventListener("change", onEdit);  // select
