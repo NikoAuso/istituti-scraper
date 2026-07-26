@@ -23,13 +23,24 @@
                white-space: nowrap; cursor: pointer; }
   .hint { color: var(--muted); }
   #genera, #salva { margin-left: auto; }
+  /* menu selezione colonne */
+  .cols { position: relative; }
+  .cols > summary { list-style: none; cursor: pointer; height: 34px; display: inline-flex; align-items: center;
+    gap: 6px; padding: 0 10px; border: 1px solid var(--bd); border-radius: 6px; background: #fff; font-size: 13px; color: #344054; }
+  .cols > summary::-webkit-details-marker { display: none; }
+  .cols-menu { position: absolute; z-index: 5; top: 40px; right: 0; min-width: 210px; max-height: 340px; overflow: auto;
+    background: #fff; border: 1px solid var(--bd); border-radius: 8px; box-shadow: 0 8px 24px rgba(16, 24, 40, .14); padding: 6px; }
+  .cols-menu .act { display: flex; gap: 10px; padding: 4px 8px 8px; border-bottom: 1px solid #eef0f3; margin-bottom: 4px; }
+  .cols-menu .act a { color: var(--accent); font-size: 12px; cursor: pointer; }
+  .cols-menu label { display: flex; align-items: center; gap: 8px; padding: 5px 8px; font-size: 13px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
+  .cols-menu label:hover { background: var(--bg); }
   button { height: 34px; padding: 0 16px; border: 0; border-radius: 6px; background: var(--accent);
            color: #fff; font-weight: 600; cursor: pointer; }
   button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
   button:disabled { opacity: .5; cursor: default; }
   #status { padding: 6px 18px; color: var(--muted); font-size: 12px; min-height: 16px; }
   .wrap { overflow: auto; max-height: calc(100vh - 250px); border-top: 1px solid var(--bd); }
-  table { border-collapse: collapse; width: 100%; }
+  table { border-collapse: collapse; width: max-content; min-width: 100%; }
   th { position: sticky; top: 0; background: #eef1f5; text-align: left; padding: 7px 8px;
        font-size: 11px; text-transform: uppercase; color: #475467; white-space: nowrap;
        cursor: pointer; user-select: none; border-bottom: 1px solid var(--bd); }
@@ -118,7 +129,10 @@
   </div>
   <div class="f">
     <span class="cap">Colonne</span>
-    <div class="row"><label><input type="checkbox" id="colonne"> tutte</label></div>
+    <details class="cols">
+      <summary>scegli… ▾</summary>
+      <div class="cols-menu" id="colsMenu"></div>
+    </details>
   </div>
   <button class="ghost" id="salva" disabled>Salva nel JSON</button>
 </div>
@@ -168,8 +182,10 @@ const $ = (id) => document.getElementById(id);
 const attr = (v) => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 
 let data = [];
-let showExtra = false;
 let sortKey = null, sortDir = 1;
+
+// visibilità colonne: curate visibili, extra nascoste di default
+COLUMNS.forEach(c => { c.visible = !c.extra; });
 
 // popola i due select statici
 REGIONI.forEach(r => $("regione").add(new Option(r, r)));
@@ -179,7 +195,15 @@ const setStatus = (m) => { $("status").textContent = m; };
 const has = (k) => data.length > 0 && k in data[0];
 
 function visibleCols() {
-  return COLUMNS.filter(c => (showExtra || !c.extra) && has(c.k));
+  return COLUMNS.filter(c => c.visible && has(c.k));
+}
+
+// menu di selezione colonne: elenca solo quelle presenti nei dati
+function buildColsMenu() {
+  const avail = COLUMNS.filter(c => has(c.k));
+  $("colsMenu").innerHTML =
+    `<div class="act"><a data-all="1">tutte</a><a data-all="0">essenziali</a></div>` +
+    avail.map(c => `<label><input type="checkbox" data-col="${c.k}"${c.visible ? " checked" : ""}> ${c.label}</label>`).join("");
 }
 
 function fillFilter(sel, values, labeler) {
@@ -263,6 +287,7 @@ function load(records) {
   data = records;
   sortKey = null;
   refreshFilters();
+  buildColsMenu();
   render();
 }
 
@@ -293,7 +318,19 @@ $("tbody").addEventListener("change", onEdit);  // select
 // i filtri client ridisegnano soltanto
 ["search", "fRegione", "fProvincia", "fLivello", "fTipo"].forEach(id =>
   $(id).addEventListener("input", render));
-$("colonne").addEventListener("change", () => { showExtra = $("colonne").checked; render(); });
+
+// menu colonne: toggle singolo + scorciatoie tutte/essenziali
+$("colsMenu").addEventListener("change", (e) => {
+  const col = COLUMNS.find(c => c.k === e.target.dataset.col);
+  if (col) { col.visible = e.target.checked; render(); }
+});
+$("colsMenu").addEventListener("click", (e) => {
+  const all = e.target.dataset.all;
+  if (all == null) return;
+  COLUMNS.forEach(c => { c.visible = all === "1" ? true : !c.extra; });
+  buildColsMenu();
+  render();
+});
 
 $("genera").addEventListener("click", async () => {
   const opts = {
