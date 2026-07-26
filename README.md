@@ -52,7 +52,7 @@ Ogni scuola è un oggetto con questi campi (valori mancanti = `null`):
 |-------|------|
 | `codice` | codice meccanografico |
 | `denominazione` | grafia grezza MIUR (sigle, virgolette) |
-| `denominazione_estesa` | denominazione **normalizzata** (sigle espanse, virgolette rimosse, title-case) |
+| `denominazione_estesa` | denominazione **normalizzata**: sigle espanse (con e senza punti), numeri romani preservati, virgolette rimosse, title-case |
 | `indirizzo`, `cap`, `comune`, `codice_comune` | |
 | `provincia`, `regione`, `area` | |
 | `grado` | etichetta grezza MIUR (es. `LICEO SCIENTIFICO`) |
@@ -95,6 +95,8 @@ Esempio di un elemento (alcuni campi omessi per brevità):
   abbreviate (`FRIULI-VENEZIA G.`) — il filtro è tollerante alle varianti.
 - **Valle d'Aosta** e **Trentino-Alto Adige / Bolzano** gestiscono anagrafi proprie e
   **non sono presenti** nel dataset nazionale.
+- `denominazione_estesa` è una normalizzazione euristica (best-effort) di `denominazione`:
+  utile per lettura e geocoding, ma la grafia grezza MIUR resta in `denominazione`.
 - Il dato ufficiale non contiene coordinate: `--geocode` le ricava da
   [Nominatim](https://nominatim.org) con una **cascata a precisione decrescente**, così ogni
   scuola è geolocalizzata (`geo_precision` indica la qualità):
