@@ -35,7 +35,7 @@ def test_normalize_statale():
     assert r["pec"] is None            # "Non Disponibile" -> null
     assert r["sito_web"] is None       # solo spazi -> null
     assert r["paritaria"] is False
-    assert r["nome"] == "Liceo Classico Rinaldini"   # nome normalizzato
+    assert r["denominazione_estesa"] == "Liceo Classico Rinaldini"   # denominazione normalizzata
     assert r["lat"] is None and r["lon"] is None and r["osm_id"] is None  # geo sempre presenti, null senza geocode
     assert r["geo_precision"] is None
 
@@ -49,11 +49,11 @@ def test_clean_name():
 
 def test_name_variants():
     den = 'ISTITUTO TECNICO ECONOMICO "L. EINAUDI"'
-    v = extract.name_variants({"denominazione": den, "nome": extract.clean_name(den)})
+    v = extract.name_variants({"denominazione": den, "denominazione_estesa": extract.clean_name(den)})
     assert v[0] == "Istituto Tecnico Economico L. Einaudi"   # nome completo
     assert "Einaudi" in v                                    # nome proprio senza iniziali
     # senza virgolette -> solo il nome completo
-    assert extract.name_variants({"denominazione": "M.MONTESSORI", "nome": "M. Montessori"}) == ["M. Montessori"]
+    assert extract.name_variants({"denominazione": "M.MONTESSORI", "denominazione_estesa": "M. Montessori"}) == ["M. Montessori"]
 
 
 def test_normalize_paritaria_schema_ridotto():

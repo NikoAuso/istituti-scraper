@@ -137,7 +137,7 @@ def clean_name(den: str | None) -> str | None:
 def name_variants(record: dict) -> list[str]:
     """Query per il geocoding per nome: nome completo normalizzato + eventuale nome
     proprio tra virgolette (senza iniziali), es. ['Liceo Classico M. Pagano', 'Pagano']."""
-    nome = record.get("nome")
+    nome = record.get("denominazione_estesa")
     out = [nome] if nome else []
     m = re.search(r'["“]([^"”]+)["”]', record.get("denominazione") or "")
     if m:
@@ -150,7 +150,7 @@ def name_variants(record: dict) -> list[str]:
 
 def normalize(row: dict, paritaria: bool) -> dict:
     record = {field: clean(row.get(col)) for col, field in FIELD_MAP.items()}
-    record["nome"] = clean_name(record["denominazione"])
+    record["denominazione_estesa"] = clean_name(record["denominazione"])
     record["livello"] = livello(record["grado"])
     record["paritaria"] = paritaria
     record["lat"] = None  # geo sempre presenti; valorizzati da geocode()

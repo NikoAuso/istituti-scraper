@@ -51,7 +51,7 @@ Ogni scuola è un oggetto con questi campi (valori mancanti = `null`):
 |-------|------|
 | `codice` | codice meccanografico |
 | `denominazione` | grafia grezza MIUR (sigle, virgolette) |
-| `nome` | denominazione **normalizzata** (sigle espanse, virgolette rimosse, title-case) |
+| `denominazione_estesa` | denominazione **normalizzata** (sigle espanse, virgolette rimosse, title-case) |
 | `indirizzo`, `cap`, `comune`, `codice_comune` | |
 | `provincia`, `regione`, `area` | |
 | `grado` | etichetta grezza MIUR (es. `LICEO SCIENTIFICO`) |

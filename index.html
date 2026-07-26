@@ -58,7 +58,8 @@
   td.c-bool input:disabled { cursor: default; }
   /* larghezze per colonna: tabella più larga, scroll orizzontale */
   td > input[type=text], td > select { min-width: 150px; }
-  td[data-k="denominazione"] > input[type=text], td[data-k="indirizzo"] > input[type=text],
+  td[data-k="denominazione_estesa"] > input[type=text], td[data-k="denominazione"] > input[type=text],
+  td[data-k="indirizzo"] > input[type=text],
   td[data-k="istituto_riferimento"] > input[type=text] { min-width: 340px; }
   td[data-k="grado"] > input[type=text] { min-width: 280px; }
   td[data-k="comune"] > input[type=text], td[data-k="email"] > input[type=text],
@@ -161,7 +162,8 @@ const REGIONI_DATA = ["ABRUZZO","BASILICATA","CALABRIA","CAMPANIA","EMILIA ROMAG
 
 // colonne curate (extra: nascoste finché non si spunta "tutte le colonne")
 const COLUMNS = [
-  { k: "nome", label: "Nome", wide: true },
+  { k: "denominazione_estesa", label: "Denominazione estesa", wide: true },
+  { k: "denominazione", label: "Denominazione", wide: true },
   { k: "livello", label: "Livello", enum: LIV_OPTS },
   { k: "grado", label: "Grado" },
   { k: "comune", label: "Comune" },
@@ -176,7 +178,6 @@ const COLUMNS = [
   { k: "lat", label: "Lat", num: true }, { k: "lon", label: "Lon", num: true },
   { k: "osm_id", label: "OSM" },
   { k: "geo_precision", label: "Precisione", ro: true },
-  { k: "denominazione", label: "Denominazione (MIUR)", extra: true, wide: true },
   { k: "pec", label: "PEC", extra: true },
   { k: "codice_comune", label: "Cod. comune", extra: true, ro: true },
   { k: "area", label: "Area", extra: true, ro: true },
@@ -295,7 +296,7 @@ function render() {
 function load(records) {
   data = records;
   data.forEach(r => {
-    if (!("nome" in r) || r.nome == null) r.nome = r.denominazione;  // fallback per JSON vecchi
+    if (!("denominazione_estesa" in r) || r.denominazione_estesa == null) r.denominazione_estesa = r.denominazione;  // fallback per JSON vecchi
     if (!("lat" in r)) r.lat = null;
     if (!("lon" in r)) r.lon = null;
     if (!("osm_id" in r)) r.osm_id = null;
