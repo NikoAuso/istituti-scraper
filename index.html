@@ -35,10 +35,11 @@
        cursor: pointer; user-select: none; border-bottom: 1px solid var(--bd); }
   th:hover { background: #e5e9ef; }
   td { border-bottom: 1px solid #eef0f3; padding: 0; }
-  td.c-bool { text-align: center; padding: 4px; }
-  td input[type=text] { width: 100%; min-width: 110px; border: 0; padding: 6px 8px; background: transparent; }
+  td input[type=text], td select { width: 100%; min-width: 110px; border: 0; padding: 6px 8px;
+       background: transparent; font: inherit; color: inherit; }
+  td select { cursor: pointer; }
   td.wide input { min-width: 260px; }
-  td input:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
+  td input:focus, td select:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
 </style>
 
 <header>
@@ -124,20 +125,26 @@ const LIVELLI = [["","Tutti"],["infanzia","Infanzia"],["primaria","Primaria"],
   ["secondaria-i","Secondaria I grado"],["secondaria-ii","Secondaria II grado (superiori)"],
   ["comprensivo","Istituto comprensivo"],["altro","Altro (CPIA, convitti…)"]];
 const LIV_LABEL = Object.fromEntries(LIVELLI.map(([v, l]) => [v, l]));
+// enum modificabili nelle celle (valori = grafie reali del dato MIUR)
+const LIV_OPTS = LIVELLI.filter(([v]) => v);
+const PAR_OPTS = [["false", "Statale"], ["true", "Paritaria"]];
+const REGIONI_DATA = ["ABRUZZO","BASILICATA","CALABRIA","CAMPANIA","EMILIA ROMAGNA","FRIULI-VENEZIA G.",
+  "LAZIO","LIGURIA","LOMBARDIA","MARCHE","MOLISE","PIEMONTE","PUGLIA","SARDEGNA","SICILIA","TOSCANA","UMBRIA","VENETO"]
+  .map(r => [r, r]);
 
 // colonne curate (extra: nascoste finché non si spunta "tutte le colonne")
 const COLUMNS = [
   { k: "denominazione", label: "Denominazione", wide: true },
-  { k: "livello", label: "Livello" },
+  { k: "livello", label: "Livello", enum: LIV_OPTS },
   { k: "grado", label: "Grado" },
   { k: "comune", label: "Comune" },
   { k: "provincia", label: "Provincia" },
-  { k: "regione", label: "Regione" },
+  { k: "regione", label: "Regione", enum: REGIONI_DATA },
   { k: "indirizzo", label: "Indirizzo", wide: true },
   { k: "cap", label: "CAP" },
   { k: "email", label: "Email" },
   { k: "sito_web", label: "Sito web" },
-  { k: "paritaria", label: "Paritaria", bool: true },
+  { k: "paritaria", label: "Sorgente", enum: PAR_OPTS, parse: (v) => v === "true" },
   { k: "codice", label: "Codice" },
   { k: "lat", label: "Lat" }, { k: "lon", label: "Lon" },
   { k: "pec", label: "PEC", extra: true },
@@ -215,8 +222,12 @@ function sortIndices(idx) {
 
 function cell(i, c) {
   const v = data[i][c.k];
-  if (c.bool)
-    return `<td class="c-bool"><input type="checkbox" data-i="${i}" data-c="${c.k}" ${v ? "checked" : ""}></td>`;
+  if (c.enum) {
+    const cur = v == null ? "" : String(v);
+    const opts = c.enum.map(([ov, ol]) =>
+      `<option value="${attr(String(ov))}"${cur === String(ov) ? " selected" : ""}>${attr(ol)}</option>`).join("");
+    return `<td><select data-i="${i}" data-c="${attr(c.k)}">${opts}</select></td>`;
+  }
   return `<td class="${c.wide ? "wide" : ""}">` +
     `<input type="text" data-i="${i}" data-c="${attr(c.k)}" value="${v == null ? "" : attr(v)}"></td>`;
 }
@@ -255,13 +266,19 @@ $("thead").addEventListener("click", (e) => {
 });
 
 // editing inline -> scrive nell'array per indice originale
-$("tbody").addEventListener("input", (e) => {
+function onEdit(e) {
   const t = e.target;
   if (t.dataset.i == null) return;
   const rec = data[t.dataset.i], k = t.dataset.c;
-  if (t.type === "checkbox") rec[k] = t.checked;
-  else rec[k] = t.value === "" ? null : t.value;
-});
+  if (t.tagName === "SELECT") {
+    const col = COLUMNS.find((c) => c.k === k);
+    rec[k] = col && col.parse ? col.parse(t.value) : (t.value === "" ? null : t.value);
+  } else {
+    rec[k] = t.value === "" ? null : t.value;
+  }
+}
+$("tbody").addEventListener("input", onEdit);   // input di testo
+$("tbody").addEventListener("change", onEdit);  // select
 
 // i filtri client ridisegnano soltanto
 ["search", "fRegione", "fProvincia", "fLivello", "fTipo"].forEach(id =>
