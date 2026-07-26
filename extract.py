@@ -116,12 +116,26 @@ NAME_ABBREV = {
 _LOWER = {"di", "del", "della", "dei", "delle", "dello", "degli", "e", "da", "in", "a", "per"}
 
 
+_ROMAN = re.compile(r"X{0,3}(IX|IV|V?I{0,3})")
+
+
+def _is_roman(w: str) -> bool:
+    u = w.upper()
+    return bool(u) and set(u) <= {"I", "V", "X"} and _ROMAN.fullmatch(u) is not None
+
+
 def _titlecase_it(s: str) -> str:
-    words = s.split(" ")
-    return " ".join(
-        w.lower() if i and w.lower() in _LOWER else (w[:1].upper() + w[1:].lower() if w else w)
-        for i, w in enumerate(words)
-    )
+    out = []
+    for i, w in enumerate(s.split(" ")):
+        if not w:
+            out.append(w)
+        elif _is_roman(w):
+            out.append(w.upper())                         # numeri romani: 'II', non 'Ii'
+        elif i and w.lower() in _LOWER:
+            out.append(w.lower())
+        else:
+            out.append(w[:1].upper() + w[1:].lower())
+    return " ".join(out)
 
 
 def clean_name(den: str | None) -> str | None:

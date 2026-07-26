@@ -13,7 +13,8 @@ produce un **JSON pulito**. CLI + interfaccia web, solo Python standard library.
 - **Fonte ufficiale, diretta** — scarica i CSV del Ministero, nessuno scraping di pagine HTML: copertura nazionale, dato autorevole e stabile.
 - **Statali + paritarie**, con filtri per regione, provincia, livello e grado.
 - **Campo `livello` derivato** — riconduce le ~45 etichette grezze MIUR a un livello sintetico, così le superiori sono individuabili nonostante nel dato grezzo siano elencate per tipo (`LICEO SCIENTIFICO`, `IST PROF…`).
-- **Geocoding opzionale** (lat/lon via Nominatim, rispettando la policy OSM, con cache).
+- **Nomi normalizzati** — campo `denominazione_estesa` con sigle espanse (`I.C.`→Istituto Comprensivo, `L.`→Liceo…), leggibile e più adatto alle mappe.
+- **Geocoding a cascata** — quando la scuola è un POI OpenStreetMap dà coordinate dell'edificio + `osm_id`, con fallback a strada/comune; ogni punto è etichettato con `geo_precision`.
 - **Interfaccia web** per generare, modificare a mano e salvare il JSON.
 - **Zero dipendenze** — solo Python 3.8+ standard library.
 
@@ -71,6 +72,7 @@ Esempio di un elemento (alcuni campi omessi per brevità):
 {
   "codice": "APTD00201T",
   "denominazione": "ISTITUTO TECNICO ECONOMICO \"L. EINAUDI\"",
+  "denominazione_estesa": "Istituto Tecnico Economico L. Einaudi",
   "indirizzo": "VIA LEGNANO 17",
   "cap": "63018",
   "comune": "PORTO SANT'ELPIDIO",
@@ -80,7 +82,10 @@ Esempio di un elemento (alcuni campi omessi per brevità):
   "livello": "secondaria-ii",
   "email": "APIS00200G@istruzione.it",
   "sito_web": "www.polourbani.edu.it",
-  "paritaria": false
+  "paritaria": false,
+  "lat": 43.243, "lon": 13.763,
+  "osm_id": "w27784250",
+  "geo_precision": "school"
 }
 ```
 
