@@ -94,6 +94,7 @@ def normalize(row: dict, paritaria: bool) -> dict:
     record["paritaria"] = paritaria
     record["lat"] = None  # sempre presenti; valorizzati da geocode()
     record["lon"] = None
+    record["osm_id"] = None
     return record
 
 
@@ -181,7 +182,10 @@ def _nominatim(indirizzo: str, comune: str) -> dict | None:
         return None
     if not data:
         return None
-    return {"lat": float(data[0]["lat"]), "lon": float(data[0]["lon"])}
+    top = data[0]
+    # riferimento OSM compatto: iniziale del tipo (n/w/r) + id, es. "w27784250"
+    osm = f"{top['osm_type'][0]}{top['osm_id']}" if top.get("osm_type") and top.get("osm_id") else None
+    return {"lat": float(top["lat"]), "lon": float(top["lon"]), "osm_id": osm}
 
 
 def geocode(records: list[dict], cache_path: str = "geocache.json",
@@ -207,6 +211,7 @@ def geocode(records: list[dict], cache_path: str = "geocache.json",
         hit = cache[key]
         record["lat"] = hit["lat"] if hit else None
         record["lon"] = hit["lon"] if hit else None
+        record["osm_id"] = hit.get("osm_id") if hit else None
     return records
 
 

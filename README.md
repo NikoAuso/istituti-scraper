@@ -61,6 +61,7 @@ Ogni scuola è un oggetto con questi campi (valori mancanti = `null`):
 | `anno_scolastico` | |
 | `paritaria` | `true` / `false` |
 | `lat`, `lon` | sempre presenti; valorizzati con `--geocode`, altrimenti `null` (editabili a mano nell'interfaccia) |
+| `osm_id` | riferimento OpenStreetMap compatto (es. `w27784250` = tipo + id); valorizzato con `--geocode` |
 
 Esempio di un elemento (alcuni campi omessi per brevità):
 
