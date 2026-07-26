@@ -112,6 +112,11 @@ NAME_ABBREV = {
     "PROF.": "Professionale", "SEC.": "Secondaria", "NAZ.": "Nazionale", "STAT.": "Statale",
     "OMNICOMPR.": "Omnicomprensivo", "COMPR.": "Comprensivo", "CONV.": "Convitto",
 }
+# stesse sigle senza punti (IC, ITIS, ISIS...); si escludono le 2-lettere ambigue
+# (LA articolo, LC/LS/SM/IT/IP troppo corte) per non espandere parole comuni.
+_AMBIGUOUS_NODOT = {"LA", "LC", "LS", "LSU", "SM", "IT", "IP"}
+NAME_ABBREV_NODOT = {k.replace(".", ""): v for k, v in NAME_ABBREV.items()
+                     if k.replace(".", "") not in _AMBIGUOUS_NODOT}
 # particelle che restano minuscole nel title-case italiano
 _LOWER = {"di", "del", "della", "dei", "delle", "dello", "degli", "e", "da", "in", "a", "per"}
 
@@ -147,7 +152,8 @@ def clean_name(den: str | None) -> str | None:
     # "L." davanti al tipo di liceo = Liceo (le iniziali di nome proprio restano intatte)
     s = re.sub(r"\bL\.?\s*(?=(?:SCIENTIF|CLASSIC|ARTISTIC|LINGUISTIC|MUSICAL|COREUTIC|SCIENZE))",
                "Liceo ", s, flags=re.I)
-    s = " ".join(NAME_ABBREV.get(t.upper(), t) for t in s.split())    # espandi sigle
+    s = " ".join(NAME_ABBREV.get(t.upper(), NAME_ABBREV_NODOT.get(t.upper(), t))
+                 for t in s.split())                                  # espandi sigle (con/senza punti)
     s = re.sub(r"\b([A-Za-z])\.(?=[A-Za-z])", r"\1. ", s)             # "M.PAGANO" -> "M. PAGANO"
     return _titlecase_it(re.sub(r"\s+", " ", s).strip())
 
