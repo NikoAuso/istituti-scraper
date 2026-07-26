@@ -35,11 +35,20 @@
        cursor: pointer; user-select: none; border-bottom: 1px solid var(--bd); }
   th:hover { background: #e5e9ef; }
   td { border-bottom: 1px solid #eef0f3; padding: 0; }
-  td input[type=text], td select { width: 100%; min-width: 110px; border: 0; padding: 6px 8px;
+  td.c-bool { text-align: center; padding: 4px; min-width: 90px; }
+  td input[type=text], td select { width: 100%; border: 0; padding: 6px 9px;
        background: transparent; font: inherit; color: inherit; }
   td select { cursor: pointer; }
-  td.wide input { min-width: 260px; }
   td input:focus, td select:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
+  /* larghezze per colonna: tabella più larga, scroll orizzontale */
+  td > input[type=text], td > select { min-width: 150px; }
+  td[data-k="denominazione"] > input[type=text], td[data-k="indirizzo"] > input[type=text],
+  td[data-k="istituto_riferimento"] > input[type=text] { min-width: 340px; }
+  td[data-k="grado"] > input[type=text] { min-width: 280px; }
+  td[data-k="comune"] > input[type=text], td[data-k="email"] > input[type=text],
+  td[data-k="sito_web"] > input[type=text] { min-width: 230px; }
+  td[data-k="provincia"] > input[type=text] { min-width: 170px; }
+  td[data-k="regione"] > select, td[data-k="livello"] > select { min-width: 170px; }
 </style>
 
 <header>
@@ -127,7 +136,6 @@ const LIVELLI = [["","Tutti"],["infanzia","Infanzia"],["primaria","Primaria"],
 const LIV_LABEL = Object.fromEntries(LIVELLI.map(([v, l]) => [v, l]));
 // enum modificabili nelle celle (valori = grafie reali del dato MIUR)
 const LIV_OPTS = LIVELLI.filter(([v]) => v);
-const PAR_OPTS = [["false", "Statale"], ["true", "Paritaria"]];
 const REGIONI_DATA = ["ABRUZZO","BASILICATA","CALABRIA","CAMPANIA","EMILIA ROMAGNA","FRIULI-VENEZIA G.",
   "LAZIO","LIGURIA","LOMBARDIA","MARCHE","MOLISE","PIEMONTE","PUGLIA","SARDEGNA","SICILIA","TOSCANA","UMBRIA","VENETO"]
   .map(r => [r, r]);
@@ -144,7 +152,7 @@ const COLUMNS = [
   { k: "cap", label: "CAP" },
   { k: "email", label: "Email" },
   { k: "sito_web", label: "Sito web" },
-  { k: "paritaria", label: "Sorgente", enum: PAR_OPTS, parse: (v) => v === "true" },
+  { k: "paritaria", label: "Paritaria", bool: true },
   { k: "codice", label: "Codice" },
   { k: "lat", label: "Lat" }, { k: "lon", label: "Lon" },
   { k: "pec", label: "PEC", extra: true },
@@ -222,14 +230,15 @@ function sortIndices(idx) {
 
 function cell(i, c) {
   const v = data[i][c.k];
+  if (c.bool)
+    return `<td data-k="${c.k}" class="c-bool"><input type="checkbox" data-i="${i}" data-c="${c.k}"${v ? " checked" : ""}></td>`;
   if (c.enum) {
     const cur = v == null ? "" : String(v);
     const opts = c.enum.map(([ov, ol]) =>
       `<option value="${attr(String(ov))}"${cur === String(ov) ? " selected" : ""}>${attr(ol)}</option>`).join("");
-    return `<td><select data-i="${i}" data-c="${attr(c.k)}">${opts}</select></td>`;
+    return `<td data-k="${c.k}"><select data-i="${i}" data-c="${attr(c.k)}">${opts}</select></td>`;
   }
-  return `<td class="${c.wide ? "wide" : ""}">` +
-    `<input type="text" data-i="${i}" data-c="${attr(c.k)}" value="${v == null ? "" : attr(v)}"></td>`;
+  return `<td data-k="${c.k}"><input type="text" data-i="${i}" data-c="${attr(c.k)}" value="${v == null ? "" : attr(v)}"></td>`;
 }
 
 function render() {
@@ -270,7 +279,8 @@ function onEdit(e) {
   const t = e.target;
   if (t.dataset.i == null) return;
   const rec = data[t.dataset.i], k = t.dataset.c;
-  if (t.tagName === "SELECT") {
+  if (t.type === "checkbox") rec[k] = t.checked;
+  else if (t.tagName === "SELECT") {
     const col = COLUMNS.find((c) => c.k === k);
     rec[k] = col && col.parse ? col.parse(t.value) : (t.value === "" ? null : t.value);
   } else {
