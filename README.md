@@ -50,7 +50,8 @@ Ogni scuola è un oggetto con questi campi (valori mancanti = `null`):
 | campo | note |
 |-------|------|
 | `codice` | codice meccanografico |
-| `denominazione` | |
+| `denominazione` | grafia grezza MIUR (sigle, virgolette) |
+| `nome` | denominazione **normalizzata** (sigle espanse, virgolette rimosse, title-case) |
 | `indirizzo`, `cap`, `comune`, `codice_comune` | |
 | `provincia`, `regione`, `area` | |
 | `grado` | etichetta grezza MIUR (es. `LICEO SCIENTIFICO`) |
@@ -61,7 +62,8 @@ Ogni scuola è un oggetto con questi campi (valori mancanti = `null`):
 | `anno_scolastico` | |
 | `paritaria` | `true` / `false` |
 | `lat`, `lon` | sempre presenti; valorizzati con `--geocode`, altrimenti `null` (editabili a mano nell'interfaccia) |
-| `osm_id` | riferimento OpenStreetMap compatto (es. `w27784250` = tipo + id); valorizzato con `--geocode` |
+| `osm_id` | riferimento OpenStreetMap della **scuola** (es. `w27784250`); solo quando il match è a livello scuola |
+| `geo_precision` | qualità del punto: `school` (edificio+osm_id) / `street` (strada) / `comune` (centroide) / `null` |
 
 Esempio di un elemento (alcuni campi omessi per brevità):
 
@@ -88,10 +90,15 @@ Esempio di un elemento (alcuni campi omessi per brevità):
   abbreviate (`FRIULI-VENEZIA G.`) — il filtro è tollerante alle varianti.
 - **Valle d'Aosta** e **Trentino-Alto Adige / Bolzano** gestiscono anagrafi proprie e
   **non sono presenti** nel dataset nazionale.
-- Il dato ufficiale non contiene coordinate: `--geocode` le richiede a
-  [Nominatim](https://nominatim.org) a max 1 richiesta/secondo, con cache su `geocache.json`
-  (le run successive saltano gli indirizzi già risolti). A scala nazionale sono ~55.000
-  scuole: conviene geocodare solo un sottoinsieme filtrato.
+- Il dato ufficiale non contiene coordinate: `--geocode` le ricava da
+  [Nominatim](https://nominatim.org) con una **cascata a precisione decrescente**, così ogni
+  scuola è geolocalizzata (`geo_precision` indica la qualità):
+  1. **per nome** (nome normalizzato + comune), accettato solo se il risultato è un POI
+     `amenity=school` → coordinate dell'edificio + `osm_id` della scuola;
+  2. **per indirizzo** (strada) → `geo_precision=street`;
+  3. **centroide del comune** (una sola richiesta per comune, condivisa) → `geo_precision=comune`.
+  Rispetta la policy OSM (max 1 richiesta/secondo, fino a ~3 richieste/scuola) con cache su
+  `geocache.json`. A scala nazionale conviene geocodare per regione/provincia e accumulare la cache.
 
 ## Test
 

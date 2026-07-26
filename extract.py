@@ -88,13 +88,75 @@ def livello(grado: str | None) -> str | None:
     return "altro"  # CENTRO TERRITORIALE (CPIA), CONVITTO, EDUCANDATO...
 
 
+# Espansione delle sigle MIUR ricorrenti: rende il nome leggibile e più vicino
+# alla grafia usata in OpenStreetMap (migliora il match del geocoding per nome).
+NAME_ABBREV = {
+    "I.C.": "Istituto Comprensivo", "IST.": "Istituto", "ISTIT.": "Istituto",
+    "I.I.S.": "Istituto Istruzione Superiore",
+    "I.I.S.S.": "Istituto Istruzione Secondaria Superiore",
+    "I.S.I.S.": "Istituto Statale Istruzione Superiore",
+    "I.S.I.S.S.": "Istituto Statale Istruzione Secondaria Superiore",
+    "I.T.": "Istituto Tecnico", "I.T.C.": "Istituto Tecnico Commerciale",
+    "I.T.C.G.": "Istituto Tecnico Commerciale e Geometri",
+    "I.T.G.": "Istituto Tecnico Geometri", "I.T.I.": "Istituto Tecnico Industriale",
+    "I.T.I.S.": "Istituto Tecnico Industriale", "I.T.E.": "Istituto Tecnico Economico",
+    "I.T.T.": "Istituto Tecnico Tecnologico", "I.P.": "Istituto Professionale",
+    "I.P.S.": "Istituto Professionale",
+    "I.P.S.I.A.": "Istituto Professionale Industria e Artigianato",
+    "I.P.S.E.O.A.": "Istituto Professionale Enogastronomia e Ospitalità",
+    "I.P.S.S.": "Istituto Professionale Servizi Sociali",
+    "L.S.": "Liceo Scientifico", "L.C.": "Liceo Classico", "L.A.": "Liceo Artistico",
+    "L.S.U.": "Liceo Scienze Umane", "S.M.S.": "Scuola Media Statale", "S.M.": "Scuola Media",
+    "D.D.": "Direzione Didattica", "C.D.": "Circolo Didattico",
+    "C.P.I.A.": "Centro Provinciale Istruzione Adulti",
+    "PROF.": "Professionale", "SEC.": "Secondaria", "NAZ.": "Nazionale", "STAT.": "Statale",
+}
+# particelle che restano minuscole nel title-case italiano
+_LOWER = {"di", "del", "della", "dei", "delle", "dello", "degli", "e", "da", "in", "a", "per"}
+
+
+def _titlecase_it(s: str) -> str:
+    words = s.split(" ")
+    return " ".join(
+        w.lower() if i and w.lower() in _LOWER else (w[:1].upper() + w[1:].lower() if w else w)
+        for i, w in enumerate(words)
+    )
+
+
+def clean_name(den: str | None) -> str | None:
+    """Nome leggibile e normalizzato: toglie virgolette, espande le sigle, separa le
+    iniziali attaccate ('M.PAGANO' -> 'M. Pagano'), title-case."""
+    if not den:
+        return None
+    s = re.sub(r'["“”]', " ", den.strip())
+    s = " ".join(NAME_ABBREV.get(t.upper(), t) for t in s.split())    # espandi sigle
+    s = re.sub(r"\b([A-Za-z])\.(?=[A-Za-z])", r"\1. ", s)             # "M.PAGANO" -> "M. PAGANO"
+    return _titlecase_it(re.sub(r"\s+", " ", s).strip())
+
+
+def name_variants(record: dict) -> list[str]:
+    """Query per il geocoding per nome: nome completo normalizzato + eventuale nome
+    proprio tra virgolette (senza iniziali), es. ['Liceo Classico M. Pagano', 'Pagano']."""
+    nome = record.get("nome")
+    out = [nome] if nome else []
+    m = re.search(r'["“]([^"”]+)["”]', record.get("denominazione") or "")
+    if m:
+        proper = re.sub(r"\b[A-Za-z]\.\s*", "", m.group(1))          # togli iniziali singole
+        proper = _titlecase_it(re.sub(r"\s+", " ", proper).strip())
+        if proper and proper.lower() != (nome or "").lower():
+            out.append(proper)
+    return out
+
+
 def normalize(row: dict, paritaria: bool) -> dict:
     record = {field: clean(row.get(col)) for col, field in FIELD_MAP.items()}
+    record["nome"] = clean_name(record["denominazione"])
     record["livello"] = livello(record["grado"])
     record["paritaria"] = paritaria
-    record["lat"] = None  # sempre presenti; valorizzati da geocode()
+    record["lat"] = None  # geo sempre presenti; valorizzati da geocode()
     record["lon"] = None
     record["osm_id"] = None
+    record["geo_precision"] = None  # school | street | comune | None
     return record
 
 
@@ -171,47 +233,77 @@ def load(statali: bool = True, paritarie: bool = True, regione: str | None = Non
     return records
 
 
-def _nominatim(indirizzo: str, comune: str) -> dict | None:
-    params = urllib.parse.urlencode({
-        "street": indirizzo, "city": comune, "country": "Italia",
-        "format": "json", "limit": 1,
-    })
+SCHOOL_TYPES = {"school", "kindergarten", "college", "university"}
+
+
+def _query(params: dict) -> list:
+    """Ricerca Nominatim grezza (top 5, solo Italia). Ritorna la lista dei risultati."""
+    p = {**params, "format": "jsonv2", "limit": "5", "countrycodes": "it"}
     try:
-        data = json.loads(_get(f"{NOMINATIM_URL}?{params}", timeout=30))
+        return json.loads(_get(f"{NOMINATIM_URL}?{urllib.parse.urlencode(p)}", timeout=30))
     except Exception:
-        return None
-    if not data:
-        return None
-    top = data[0]
-    # riferimento OSM compatto: iniziale del tipo (n/w/r) + id, es. "w27784250"
-    osm = f"{top['osm_type'][0]}{top['osm_id']}" if top.get("osm_type") and top.get("osm_id") else None
-    return {"lat": float(top["lat"]), "lon": float(top["lon"]), "osm_id": osm}
+        return []
+
+
+def _osm_ref(r: dict) -> str | None:
+    t, i = r.get("osm_type"), r.get("osm_id")
+    return f"{t[0]}{i}" if t and i else None
+
+
+def _school_poi(results: list) -> dict | None:
+    for r in results:
+        if (r.get("category") or r.get("class")) == "amenity" and r.get("type") in SCHOOL_TYPES:
+            return r
+    return None
 
 
 def geocode(records: list[dict], cache_path: str = "geocache.json",
             pause: float = 1.0, log=print) -> list[dict]:
-    """Arricchisce con lat/lon via Nominatim. Rispetta la policy OSM (max 1 req/s)
-    e mantiene una cache su disco: le run successive saltano gli indirizzi già risolti."""
+    """Geocoding a cascata via Nominatim, con livello di precisione per punto:
+      1. per nome  -> POI scuola (amenity=school): coord edificio + osm_id della scuola
+      2. indirizzo -> strada
+      3. comune    -> centroide (cache condivisa: un comune si risolve una volta sola)
+    Cache su disco keyed per query: le run successive saltano il già risolto.
+    Rispetta la policy OSM (max 1 req/s)."""
     cache_file = Path(cache_path)
     cache = json.loads(cache_file.read_text()) if cache_file.exists() else {}
-    misses = 0
-    for i, record in enumerate(records, 1):
-        indirizzo, comune = record.get("indirizzo"), record.get("comune")
-        if not indirizzo or not comune:
-            record["lat"] = record["lon"] = None
-            continue
-        key = f"{indirizzo}|{comune}|{record.get('cap') or ''}".lower()
+
+    def cached(params: dict) -> list:
+        key = json.dumps(params, sort_keys=True, ensure_ascii=False)
         if key not in cache:
-            cache[key] = _nominatim(indirizzo, comune)
+            cache[key] = _query(params)
             cache_file.write_text(json.dumps(cache, ensure_ascii=False))
-            misses += 1
-            if misses % 50 == 0:
-                log(f"  geocoding: {i}/{len(records)}")
             time.sleep(pause)
-        hit = cache[key]
-        record["lat"] = hit["lat"] if hit else None
-        record["lon"] = hit["lon"] if hit else None
-        record["osm_id"] = hit.get("osm_id") if hit else None
+        return cache[key]
+
+    def place(record, r, precision, osm=None):
+        record["lat"], record["lon"] = float(r["lat"]), float(r["lon"])
+        record["osm_id"], record["geo_precision"] = osm, precision
+
+    for i, record in enumerate(records, 1):
+        record["lat"] = record["lon"] = record["osm_id"] = None
+        record["geo_precision"] = None
+        comune, indirizzo = record.get("comune"), record.get("indirizzo")
+
+        placed = False
+        for q in name_variants(record) if comune else []:          # 1. per nome
+            poi = _school_poi(cached({"q": f"{q}, {comune}, Italia"}))
+            if poi:
+                place(record, poi, "school", _osm_ref(poi))
+                placed = True
+                break
+        if not placed and indirizzo and comune:                    # 2. indirizzo
+            res = cached({"street": indirizzo, "city": comune, "country": "Italia"})
+            if res:
+                place(record, res[0], "street")
+                placed = True
+        if not placed and comune:                                  # 3. centroide comune
+            res = cached({"q": f"{comune}, Italia"})
+            if res:
+                place(record, res[0], "comune")
+
+        if i % 50 == 0:
+            log(f"  geocoding: {i}/{len(records)}")
     return records
 
 
@@ -226,9 +318,9 @@ def build(opts: dict, log=print) -> list[dict]:
         log=log,
     )
     if opts.get("geocode"):
-        if len(records) > 2000:
-            log(f"ATTENZIONE: geocoding di {len(records)} scuole a 1 req/s "
-                f"(~{len(records) // 60} min). Conviene filtrare prima.")
+        if len(records) > 500:
+            log(f"ATTENZIONE: geocoding a cascata di {len(records)} scuole a 1 req/s "
+                f"(fino a ~3 richieste/scuola). Conviene filtrare o geocodare per regione.")
         geocode(records, cache_path=opts.get("cache", "geocache.json"), log=log)
     return records
 
