@@ -2,7 +2,8 @@
 <style>
   :root { --bd: #d0d5dd; --bg: #f7f8fa; --accent: #2563eb; --muted: #667085; }
   * { box-sizing: border-box; }
-  body { font: 14px/1.4 system-ui, sans-serif; margin: 0; color: #101828; }
+  body { font: 14px/1.4 system-ui, sans-serif; margin: 0; color: #101828;
+         height: 100svh; display: flex; flex-direction: column; overflow: hidden; }
   header { padding: 14px 18px; border-bottom: 1px solid var(--bd); }
   header h1 { font-size: 17px; margin: 0; }
   header p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
@@ -39,7 +40,7 @@
   button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
   button:disabled { opacity: .5; cursor: default; }
   #status { padding: 6px 18px; color: var(--muted); font-size: 12px; min-height: 16px; }
-  .wrap { overflow: auto; max-height: calc(100vh - 250px); border-top: 1px solid var(--bd); }
+  .wrap { flex: 1; min-height: 0; overflow: auto; border-top: 1px solid var(--bd); }
   table { border-collapse: collapse; width: max-content; min-width: 100%; }
   th { position: sticky; top: 0; background: #eef1f5; text-align: left; padding: 7px 8px;
        font-size: 11px; text-transform: uppercase; color: #475467; white-space: nowrap;
