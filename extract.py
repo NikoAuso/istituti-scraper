@@ -110,6 +110,7 @@ NAME_ABBREV = {
     "D.D.": "Direzione Didattica", "C.D.": "Circolo Didattico",
     "C.P.I.A.": "Centro Provinciale Istruzione Adulti",
     "PROF.": "Professionale", "SEC.": "Secondaria", "NAZ.": "Nazionale", "STAT.": "Statale",
+    "OMNICOMPR.": "Omnicomprensivo", "COMPR.": "Comprensivo", "CONV.": "Convitto",
 }
 # particelle che restano minuscole nel title-case italiano
 _LOWER = {"di", "del", "della", "dei", "delle", "dello", "degli", "e", "da", "in", "a", "per"}
@@ -129,6 +130,9 @@ def clean_name(den: str | None) -> str | None:
     if not den:
         return None
     s = re.sub(r'["“”]', " ", den.strip())
+    # "L." davanti al tipo di liceo = Liceo (le iniziali di nome proprio restano intatte)
+    s = re.sub(r"\bL\.?\s*(?=(?:SCIENTIF|CLASSIC|ARTISTIC|LINGUISTIC|MUSICAL|COREUTIC|SCIENZE))",
+               "Liceo ", s, flags=re.I)
     s = " ".join(NAME_ABBREV.get(t.upper(), t) for t in s.split())    # espandi sigle
     s = re.sub(r"\b([A-Za-z])\.(?=[A-Za-z])", r"\1. ", s)             # "M.PAGANO" -> "M. PAGANO"
     return _titlecase_it(re.sub(r"\s+", " ", s).strip())
