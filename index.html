@@ -1,115 +1,236 @@
 <title>Istituti scolastici italiani — estrazione e modifica</title>
 <style>
-  :root { --bd: #d0d5dd; --bg: #f7f8fa; --accent: #2563eb; }
+  :root { --bd: #d0d5dd; --bg: #f7f8fa; --accent: #2563eb; --muted: #667085; }
   * { box-sizing: border-box; }
   body { font: 14px/1.4 system-ui, sans-serif; margin: 0; color: #101828; }
   header { padding: 14px 18px; border-bottom: 1px solid var(--bd); }
   header h1 { font-size: 17px; margin: 0; }
-  header p { margin: 4px 0 0; color: #667085; font-size: 12px; }
-  .panel { display: flex; flex-wrap: wrap; gap: 12px; align-items: end;
-           padding: 12px 18px; background: var(--bg); border-bottom: 1px solid var(--bd); }
-  .panel label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: #475467; }
-  .panel input[type=text], .panel select { padding: 6px 8px; border: 1px solid var(--bd); border-radius: 6px; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end;
+         padding: 10px 18px; border-bottom: 1px solid var(--bd); }
+  .bar.gen { background: var(--bg); }
+  .bar > .tag { align-self: center; font-size: 11px; font-weight: 700; text-transform: uppercase;
+                color: var(--muted); letter-spacing: .03em; }
+  label.f { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: #475467; }
+  input[type=text], select { padding: 6px 8px; border: 1px solid var(--bd); border-radius: 6px; font: inherit; }
   .checks { flex-direction: row; align-items: center; gap: 14px; }
   .checks span { display: inline-flex; align-items: center; gap: 4px; }
+  .grow { flex: 1; min-width: 140px; }
   button { padding: 7px 14px; border: 0; border-radius: 6px; background: var(--accent);
            color: #fff; font-weight: 600; cursor: pointer; }
   button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
   button:disabled { opacity: .5; cursor: default; }
-  .toolbar { display: flex; gap: 12px; align-items: center; padding: 10px 18px; }
-  .toolbar input { flex: 1; padding: 7px 10px; border: 1px solid var(--bd); border-radius: 6px; }
-  #status { padding: 0 18px 8px; color: #667085; font-size: 12px; min-height: 16px; }
-  .wrap { overflow: auto; max-height: calc(100vh - 220px); border-top: 1px solid var(--bd); }
+  #status { padding: 6px 18px; color: var(--muted); font-size: 12px; min-height: 16px; }
+  .wrap { overflow: auto; max-height: calc(100vh - 250px); border-top: 1px solid var(--bd); }
   table { border-collapse: collapse; width: 100%; }
-  th { position: sticky; top: 0; background: #eef1f5; text-align: left; padding: 6px 8px;
-       font-size: 11px; text-transform: uppercase; color: #475467; white-space: nowrap; }
+  th { position: sticky; top: 0; background: #eef1f5; text-align: left; padding: 7px 8px;
+       font-size: 11px; text-transform: uppercase; color: #475467; white-space: nowrap;
+       cursor: pointer; user-select: none; border-bottom: 1px solid var(--bd); }
+  th:hover { background: #e5e9ef; }
   td { border-bottom: 1px solid #eef0f3; padding: 0; }
-  td input { width: 100%; min-width: 120px; border: 0; padding: 6px 8px; background: transparent; font: inherit; }
+  td.c-bool { text-align: center; padding: 4px; }
+  td input[type=text] { width: 100%; min-width: 110px; border: 0; padding: 6px 8px; background: transparent; }
+  td.wide input { min-width: 260px; }
   td input:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
 </style>
 
 <header>
   <h1>Istituti scolastici italiani</h1>
-  <p>Dati ufficiali del Ministero (dati.istruzione.it). Imposta le opzioni, genera, modifica in tabella, salva.</p>
+  <p>Dati ufficiali del Ministero (dati.istruzione.it). Genera l'estrazione, filtra e ordina, modifica in tabella, salva.</p>
 </header>
 
-<div class="panel">
-  <label class="checks">Sorgenti
+<!-- opzioni di ESTRAZIONE (lato server: cosa scaricare) -->
+<div class="bar gen">
+  <span class="tag">Genera</span>
+  <label class="f checks">Sorgenti
     <span><input type="checkbox" id="statali" checked> statali</span>
     <span><input type="checkbox" id="paritarie" checked> paritarie</span>
   </label>
-  <label>Regione
+  <label class="f">Regione
     <select id="regione"><option value="">Tutte</option></select>
   </label>
-  <label>Provincia
+  <label class="f">Provincia
     <input type="text" id="provincia" placeholder="es. ANCONA" size="12">
   </label>
-  <label>Livello
-    <select id="livello">
-      <option value="">Tutti</option>
-      <option value="infanzia">Infanzia</option>
-      <option value="primaria">Primaria</option>
-      <option value="secondaria-i">Secondaria I grado</option>
-      <option value="secondaria-ii">Secondaria II grado (superiori)</option>
-      <option value="comprensivo">Istituto comprensivo</option>
-      <option value="altro">Altro (CPIA, convitti…)</option>
-    </select>
+  <label class="f">Livello
+    <select id="livello"></select>
   </label>
-  <label class="checks"><span><input type="checkbox" id="geocode"> geocoding (lat/lon, lento)</span></label>
+  <label class="f checks"><span><input type="checkbox" id="geocode"> geocoding (lat/lon, lento)</span></label>
   <button id="genera">Genera</button>
 </div>
 
-<div class="toolbar">
-  <input type="text" id="search" placeholder="Filtra la tabella…">
+<!-- FILTRI tabella (lato client: sui dati già caricati) -->
+<div class="bar">
+  <span class="tag">Filtra</span>
+  <input type="text" id="search" class="grow" placeholder="Cerca in tabella…">
+  <label class="f">Regione <select id="fRegione"><option value="">Tutte</option></select></label>
+  <label class="f">Provincia <select id="fProvincia"><option value="">Tutte</option></select></label>
+  <label class="f">Livello <select id="fLivello"><option value="">Tutti</option></select></label>
+  <label class="f">Tipo
+    <select id="fTipo">
+      <option value="">Tutti</option>
+      <option value="statali">Statali</option>
+      <option value="paritarie">Paritarie</option>
+    </select>
+  </label>
+  <label class="f checks"><span><input type="checkbox" id="colonne"> tutte le colonne</span></label>
   <button class="ghost" id="salva" disabled>Salva nel JSON</button>
 </div>
+
 <div id="status"></div>
 <div class="wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
 
 <script>
-// Valle d'Aosta e Trentino-Alto Adige/Bolzano gestiscono anagrafi proprie: non sono nel dataset nazionale.
 const REGIONI = ["ABRUZZO","BASILICATA","CALABRIA","CAMPANIA","EMILIA ROMAGNA","FRIULI VENEZIA GIULIA",
   "LAZIO","LIGURIA","LOMBARDIA","MARCHE","MOLISE","PIEMONTE","PUGLIA","SARDEGNA","SICILIA","TOSCANA",
   "UMBRIA","VENETO"];
-const MAX_ROWS = 1000;                     // limite di righe renderizzate a schermo
+const LIVELLI = [["","Tutti"],["infanzia","Infanzia"],["primaria","Primaria"],
+  ["secondaria-i","Secondaria I grado"],["secondaria-ii","Secondaria II grado (superiori)"],
+  ["comprensivo","Istituto comprensivo"],["altro","Altro (CPIA, convitti…)"]];
+const LIV_LABEL = Object.fromEntries(LIVELLI.map(([v, l]) => [v, l]));
+
+// colonne curate (extra: nascoste finché non si spunta "tutte le colonne")
+const COLUMNS = [
+  { k: "denominazione", label: "Denominazione", wide: true },
+  { k: "livello", label: "Livello" },
+  { k: "grado", label: "Grado" },
+  { k: "comune", label: "Comune" },
+  { k: "provincia", label: "Provincia" },
+  { k: "regione", label: "Regione" },
+  { k: "indirizzo", label: "Indirizzo", wide: true },
+  { k: "cap", label: "CAP" },
+  { k: "email", label: "Email" },
+  { k: "sito_web", label: "Sito web" },
+  { k: "paritaria", label: "Paritaria", bool: true },
+  { k: "codice", label: "Codice" },
+  { k: "lat", label: "Lat" }, { k: "lon", label: "Lon" },
+  { k: "pec", label: "PEC", extra: true },
+  { k: "codice_comune", label: "Cod. comune", extra: true },
+  { k: "area", label: "Area", extra: true },
+  { k: "caratteristica", label: "Caratteristica", extra: true },
+  { k: "codice_istituto_riferimento", label: "Cod. ist. rif.", extra: true },
+  { k: "istituto_riferimento", label: "Istituto riferimento", extra: true, wide: true },
+  { k: "anno_scolastico", label: "A.S.", extra: true },
+];
+const MAX_ROWS = 1000;
 const $ = (id) => document.getElementById(id);
 const attr = (v) => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+
 let data = [];
+let showExtra = false;
+let sortKey = null, sortDir = 1;
 
+// popola i due select statici
 REGIONI.forEach(r => $("regione").add(new Option(r, r)));
+LIVELLI.forEach(([v, l]) => $("livello").add(new Option(l, v)));
 
-function setStatus(msg) { $("status").textContent = msg; }
+const setStatus = (m) => { $("status").textContent = m; };
+const has = (k) => data.length > 0 && k in data[0];
 
-function columns() { return data.length ? Object.keys(data[0]) : []; }
-
-function render() {
-  const q = $("search").value.trim().toLowerCase();
-  const cols = columns();
-  $("thead").innerHTML = "<tr>" + cols.map(c => `<th>${c}</th>`).join("") + "</tr>";
-  const rows = [];
-  let shown = 0;
-  for (let i = 0; i < data.length && shown < MAX_ROWS; i++) {
-    if (q && !JSON.stringify(data[i]).toLowerCase().includes(q)) continue;
-    shown++;
-    rows.push("<tr>" + cols.map(c => {
-      const v = data[i][c];
-      return `<td><input data-i="${i}" data-c="${attr(c)}" value="${v == null ? "" : attr(v)}"></td>`;
-    }).join("") + "</tr>");
-  }
-  $("tbody").innerHTML = rows.join("");
-  const total = data.length;
-  const suffix = shown < total ? ` (mostrati ${shown}, filtra per vederne altri)` : "";
-  setStatus(`${total} istituti${suffix}`);
-  $("salva").disabled = total === 0;
+function visibleCols() {
+  return COLUMNS.filter(c => (showExtra || !c.extra) && has(c.k));
 }
 
-$("tbody").addEventListener("input", (e) => {
-  const t = e.target;
-  if (!t.dataset.i) return;
-  data[t.dataset.i][t.dataset.c] = t.value === "" ? null : t.value;
+function fillFilter(sel, values, labeler) {
+  const keep = sel.value;
+  sel.length = 1;                                  // lascia la prima opzione ("Tutte/Tutti")
+  values.forEach(v => sel.add(new Option(labeler ? labeler(v) : v, v)));
+  sel.value = values.includes(keep) ? keep : "";
+}
+
+function distinct(k) {
+  return [...new Set(data.map(r => r[k]).filter(v => v != null))]
+    .sort((a, b) => String(a).localeCompare(String(b), "it"));
+}
+
+function refreshFilters() {
+  fillFilter($("fRegione"), distinct("regione"));
+  fillFilter($("fProvincia"), distinct("provincia"));
+  fillFilter($("fLivello"), distinct("livello"), v => LIV_LABEL[v] || v);
+}
+
+function filteredIndices() {
+  const q = $("search").value.trim().toLowerCase();
+  const fr = $("fRegione").value, fp = $("fProvincia").value, fl = $("fLivello").value, ft = $("fTipo").value;
+  const out = [];
+  for (let i = 0; i < data.length; i++) {
+    const r = data[i];
+    if (fr && r.regione !== fr) continue;
+    if (fp && r.provincia !== fp) continue;
+    if (fl && r.livello !== fl) continue;
+    if (ft === "statali" && r.paritaria) continue;
+    if (ft === "paritarie" && !r.paritaria) continue;
+    if (q && !JSON.stringify(r).toLowerCase().includes(q)) continue;
+    out.push(i);
+  }
+  return out;
+}
+
+function sortIndices(idx) {
+  if (!sortKey) return idx;
+  return idx.sort((a, b) => {
+    const va = data[a][sortKey], vb = data[b][sortKey];
+    if (va == null && vb == null) return 0;
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    return String(va).localeCompare(String(vb), "it", { numeric: true }) * sortDir;
+  });
+}
+
+function cell(i, c) {
+  const v = data[i][c.k];
+  if (c.bool)
+    return `<td class="c-bool"><input type="checkbox" data-i="${i}" data-c="${c.k}" ${v ? "checked" : ""}></td>`;
+  return `<td class="${c.wide ? "wide" : ""}">` +
+    `<input type="text" data-i="${i}" data-c="${attr(c.k)}" value="${v == null ? "" : attr(v)}"></td>`;
+}
+
+function render() {
+  const cols = visibleCols();
+  $("thead").innerHTML = "<tr>" + cols.map(c =>
+    `<th data-k="${c.k}">${c.label}${sortKey === c.k ? (sortDir > 0 ? " ▲" : " ▼") : ""}</th>`
+  ).join("") + "</tr>";
+
+  let idx = sortIndices(filteredIndices());
+  const nFiltered = idx.length;
+  idx = idx.slice(0, MAX_ROWS);
+  $("tbody").innerHTML = idx.map(i => "<tr>" + cols.map(c => cell(i, c)).join("") + "</tr>").join("");
+
+  const parts = [`${nFiltered} istituti`];
+  if (nFiltered !== data.length) parts.push(`di ${data.length}`);
+  if (nFiltered > MAX_ROWS) parts.push(`mostrati ${MAX_ROWS} — restringi i filtri`);
+  setStatus(parts.join(" · "));
+  $("salva").disabled = data.length === 0;
+}
+
+function load(records) {
+  data = records;
+  sortKey = null;
+  refreshFilters();
+  render();
+}
+
+// ordinamento cliccando l'header
+$("thead").addEventListener("click", (e) => {
+  const k = e.target.dataset.k;
+  if (!k) return;
+  if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = 1; }
+  render();
 });
 
-$("search").addEventListener("input", render);
+// editing inline -> scrive nell'array per indice originale
+$("tbody").addEventListener("input", (e) => {
+  const t = e.target;
+  if (t.dataset.i == null) return;
+  const rec = data[t.dataset.i], k = t.dataset.c;
+  if (t.type === "checkbox") rec[k] = t.checked;
+  else rec[k] = t.value === "" ? null : t.value;
+});
+
+// i filtri client ridisegnano soltanto
+["search", "fRegione", "fProvincia", "fLivello", "fTipo"].forEach(id =>
+  $(id).addEventListener("input", render));
+$("colonne").addEventListener("change", () => { showExtra = $("colonne").checked; render(); });
 
 $("genera").addEventListener("click", async () => {
   const opts = {
@@ -126,8 +247,7 @@ $("genera").addEventListener("click", async () => {
     });
     const j = await res.json();
     if (!res.ok) throw new Error(j.error || "errore");
-    data = j.records;
-    render();
+    load(j.records);
   } catch (err) {
     setStatus("Errore: " + err.message);
   } finally {
@@ -150,5 +270,5 @@ $("salva").addEventListener("click", async () => {
 });
 
 // carica un eventuale JSON già generato
-fetch("/istituti.json").then(r => r.json()).then(d => { data = d; if (d.length) render(); });
+fetch("/istituti.json").then(r => r.json()).then(d => { if (d.length) load(d); });
 </script>
