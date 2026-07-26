@@ -6,17 +6,22 @@
   header { padding: 14px 18px; border-bottom: 1px solid var(--bd); }
   header h1 { font-size: 17px; margin: 0; }
   header p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
-  .bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end;
-         padding: 10px 18px; border-bottom: 1px solid var(--bd); }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-end;
+         padding: 12px 18px; border-bottom: 1px solid var(--bd); }
   .bar.gen { background: var(--bg); }
   .bar > .tag { align-self: center; font-size: 11px; font-weight: 700; text-transform: uppercase;
-                color: var(--muted); letter-spacing: .03em; }
-  label.f { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: #475467; }
-  input[type=text], select { padding: 6px 8px; border: 1px solid var(--bd); border-radius: 6px; font: inherit; }
-  .checks { flex-direction: row; align-items: center; gap: 14px; }
-  .checks span { display: inline-flex; align-items: center; gap: 4px; }
-  .grow { flex: 1; min-width: 140px; }
-  button { padding: 7px 14px; border: 0; border-radius: 6px; background: var(--accent);
+                color: var(--muted); letter-spacing: .04em; }
+  .f { display: flex; flex-direction: column; gap: 5px; }
+  .f .cap { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; color: var(--muted); }
+  .bar input[type=text], .bar select { height: 34px; min-width: 130px; padding: 0 9px;
+         border: 1px solid var(--bd); border-radius: 6px; font: inherit; background: #fff; }
+  #search { min-width: 260px; }
+  .row { display: flex; align-items: center; gap: 16px; height: 34px; }
+  .row label { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: #344054;
+               white-space: nowrap; cursor: pointer; }
+  .hint { color: var(--muted); }
+  #genera, #salva { margin-left: auto; }
+  button { height: 34px; padding: 0 16px; border: 0; border-radius: 6px; background: var(--accent);
            color: #fff; font-weight: 600; cursor: pointer; }
   button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
   button:disabled { opacity: .5; cursor: default; }
@@ -42,38 +47,65 @@
 <!-- opzioni di ESTRAZIONE (lato server: cosa scaricare) -->
 <div class="bar gen">
   <span class="tag">Genera</span>
-  <label class="f checks">Sorgenti
-    <span><input type="checkbox" id="statali" checked> statali</span>
-    <span><input type="checkbox" id="paritarie" checked> paritarie</span>
-  </label>
-  <label class="f">Regione
+  <div class="f">
+    <span class="cap">Sorgenti</span>
+    <div class="row">
+      <label><input type="checkbox" id="statali" checked> statali</label>
+      <label><input type="checkbox" id="paritarie" checked> paritarie</label>
+    </div>
+  </div>
+  <div class="f">
+    <span class="cap">Regione</span>
     <select id="regione"><option value="">Tutte</option></select>
-  </label>
-  <label class="f">Provincia
-    <input type="text" id="provincia" placeholder="es. ANCONA" size="12">
-  </label>
-  <label class="f">Livello
+  </div>
+  <div class="f">
+    <span class="cap">Provincia</span>
+    <input type="text" id="provincia" placeholder="es. ANCONA">
+  </div>
+  <div class="f">
+    <span class="cap">Livello</span>
     <select id="livello"></select>
-  </label>
-  <label class="f checks"><span><input type="checkbox" id="geocode"> geocoding (lat/lon, lento)</span></label>
+  </div>
+  <div class="f">
+    <span class="cap">Opzioni</span>
+    <div class="row">
+      <label><input type="checkbox" id="geocode"> geocoding <span class="hint">(lat/lon, lento)</span></label>
+    </div>
+  </div>
   <button id="genera">Genera</button>
 </div>
 
 <!-- FILTRI tabella (lato client: sui dati già caricati) -->
 <div class="bar">
   <span class="tag">Filtra</span>
-  <input type="text" id="search" class="grow" placeholder="Cerca in tabella…">
-  <label class="f">Regione <select id="fRegione"><option value="">Tutte</option></select></label>
-  <label class="f">Provincia <select id="fProvincia"><option value="">Tutte</option></select></label>
-  <label class="f">Livello <select id="fLivello"><option value="">Tutti</option></select></label>
-  <label class="f">Tipo
+  <div class="f">
+    <span class="cap">Cerca</span>
+    <input type="text" id="search" placeholder="Cerca in tabella…">
+  </div>
+  <div class="f">
+    <span class="cap">Regione</span>
+    <select id="fRegione"><option value="">Tutte</option></select>
+  </div>
+  <div class="f">
+    <span class="cap">Provincia</span>
+    <select id="fProvincia"><option value="">Tutte</option></select>
+  </div>
+  <div class="f">
+    <span class="cap">Livello</span>
+    <select id="fLivello"><option value="">Tutti</option></select>
+  </div>
+  <div class="f">
+    <span class="cap">Tipo</span>
     <select id="fTipo">
       <option value="">Tutti</option>
       <option value="statali">Statali</option>
       <option value="paritarie">Paritarie</option>
     </select>
-  </label>
-  <label class="f checks"><span><input type="checkbox" id="colonne"> tutte le colonne</span></label>
+  </div>
+  <div class="f">
+    <span class="cap">Colonne</span>
+    <div class="row"><label><input type="checkbox" id="colonne"> tutte</label></div>
+  </div>
   <button class="ghost" id="salva" disabled>Salva nel JSON</button>
 </div>
 
