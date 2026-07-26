@@ -52,6 +52,10 @@
        background: transparent; font: inherit; color: inherit; }
   td select { cursor: pointer; }
   td input:focus, td select:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
+  /* campi immutabili */
+  td input[readonly] { color: var(--muted); cursor: default; }
+  td input[readonly]:focus { outline: none; background: transparent; }
+  td.c-bool input:disabled { cursor: default; }
   /* larghezze per colonna: tabella più larga, scroll orizzontale */
   td > input[type=text], td > select { min-width: 150px; }
   td[data-k="denominazione"] > input[type=text], td[data-k="indirizzo"] > input[type=text],
@@ -167,16 +171,16 @@ const COLUMNS = [
   { k: "cap", label: "CAP" },
   { k: "email", label: "Email" },
   { k: "sito_web", label: "Sito web" },
-  { k: "paritaria", label: "Paritaria", bool: true },
-  { k: "codice", label: "Codice" },
+  { k: "paritaria", label: "Paritaria", bool: true, ro: true },
+  { k: "codice", label: "Codice", ro: true },
   { k: "lat", label: "Lat" }, { k: "lon", label: "Lon" },
   { k: "pec", label: "PEC", extra: true },
-  { k: "codice_comune", label: "Cod. comune", extra: true },
-  { k: "area", label: "Area", extra: true },
+  { k: "codice_comune", label: "Cod. comune", extra: true, ro: true },
+  { k: "area", label: "Area", extra: true, ro: true },
   { k: "caratteristica", label: "Caratteristica", extra: true },
-  { k: "codice_istituto_riferimento", label: "Cod. ist. rif.", extra: true },
+  { k: "codice_istituto_riferimento", label: "Cod. ist. rif.", extra: true, ro: true },
   { k: "istituto_riferimento", label: "Istituto riferimento", extra: true, wide: true },
-  { k: "anno_scolastico", label: "A.S.", extra: true },
+  { k: "anno_scolastico", label: "A.S.", extra: true, ro: true },
 ];
 const MAX_ROWS = 1000;
 const $ = (id) => document.getElementById(id);
@@ -256,14 +260,15 @@ function sortIndices(idx) {
 function cell(i, c) {
   const v = data[i][c.k];
   if (c.bool)
-    return `<td data-k="${c.k}" class="c-bool"><input type="checkbox" data-i="${i}" data-c="${c.k}"${v ? " checked" : ""}></td>`;
+    return `<td data-k="${c.k}" class="c-bool"><input type="checkbox" data-i="${i}" data-c="${c.k}"${v ? " checked" : ""}${c.ro ? " disabled" : ""}></td>`;
   if (c.enum) {
     const cur = v == null ? "" : String(v);
     const opts = c.enum.map(([ov, ol]) =>
       `<option value="${attr(String(ov))}"${cur === String(ov) ? " selected" : ""}>${attr(ol)}</option>`).join("");
     return `<td data-k="${c.k}"><select data-i="${i}" data-c="${attr(c.k)}">${opts}</select></td>`;
   }
-  return `<td data-k="${c.k}"><input type="text" data-i="${i}" data-c="${attr(c.k)}" value="${v == null ? "" : attr(v)}"></td>`;
+  // campi immutabili: input readonly (selezionabile/copiabile ma non modificabile)
+  return `<td data-k="${c.k}"><input type="text" data-i="${i}" data-c="${attr(c.k)}" value="${v == null ? "" : attr(v)}"${c.ro ? " readonly" : ""}></td>`;
 }
 
 function render() {
